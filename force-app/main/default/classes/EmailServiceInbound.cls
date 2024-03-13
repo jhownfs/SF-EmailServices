@@ -3,45 +3,63 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
     global Messaging.InboundEmailResult handleInboundEmail(Messaging.InboundEmail email, Messaging.InboundEnvelope envelope) {
         
         Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
- 
 
         Case updCase = new case (id = this.getCaseIdFromEmail(email));
 
-        if(updCase == null){
-            
+        if(updCase.id == null){
           updCase = this.createCase(email.subject, email.plainTextBody, email.FromAddress);
           database.insert(updCase);
-
         }
 
-        EmailMessage cEmailMessage = new EmailMessage();
-        cEmailMessage.ToAddress =  String.join(email.toAddresses, ',');
-        cEmailMessage.FromAddress = email.FromAddress;
-        cEmailMessage.FromName = email.FromName;
-        cEmailMessage.Subject = email.subject;
-        cEmailMessage.status = '2';        
-        cEmailMessage.HtmlBody = email.htmlBody;
-        cEmailMessage.Incoming= True;
-        cEmailMessage.TextBody = email.plainTextBody;
-        cEmailMessage.ParentId = updCase.id;
-        insert cEmailMessage;
+        EmailMessage newEmailMessage = new EmailMessage();
+        newEmailMessage.ToAddress =  String.join(email.toAddresses, ',');
+        newEmailMessage.FromAddress = email.FromAddress;
+        newEmailMessage.FromName = email.FromName;
+        newEmailMessage.Subject = email.subject;
+        newEmailMessage.status = '2';        
+        newEmailMessage.HtmlBody = email.htmlBody;
+        newEmailMessage.Incoming= True;
+        newEmailMessage.TextBody = email.plainTextBody;
+        newEmailMessage.ParentId = updCase.id;
+        insert newEmailMessage;
 
+        Map<String, ContentVersion> mapContent = new Map<String, ContentVersion>();
+        List<ContentVersion> lstContentVersion = new List<ContentVersion>();
+        List<ContentDocumentLink> lstContentLink = new List<ContentDocumentLink>();
+        
         if(email.binaryAttachments != null){
-          for(Messaging.InboundEmail.binaryAttachment binAttach :email.binaryAttachments){
-            ContentVersion cv = new ContentVersion();
-            cv.VersionData = binAttach.body;
-            cv.Title = binAttach.fileName;
-            cv.PathOnClient = binAttach.fileName;
-            insert cv;
 
-            cv = [select ContentDocumentId from ContentVersion where id = :cv.id limit 1];
-            ContentDocumentLink cdl = new ContentDocumentLink();
-            cdl.LinkedEntityId = cEmailMessage.Id;
-            cdl.ContentDocumentId = cv.ContentDocumentId;
-            cdl.ShareType = 'V';
-            insert cdl;
+          for(Messaging.InboundEmail.binaryAttachment binAttach :email.binaryAttachments){
+
+            ContentVersion newContentVersion = new ContentVersion();
+            newContentVersion.VersionData = binAttach.body;
+            newContentVersion.Title = binAttach.fileName;
+            newContentVersion.PathOnClient = binAttach.fileName;
+            
+            lstContentVersion.add(newContentVersion);
           }
+
+          database.insert(lstContentVersion);
+
+          for(ContentVersion vContentVersion:[SELECT ContentDocumentId,Title FROM ContentVersion WHERE Id IN: lstContentVersion]){
+           
+            mapContent.put(vContentVersion.Title, vContentVersion);
+          }
+
+          for(Messaging.InboundEmail.binaryAttachment binAttach :email.binaryAttachments){
+
+            ContentVersion newContentVersion = mapContent.get(binAttach.fileName);
+            
+            ContentDocumentLink newContentLink = new ContentDocumentLink();
+            newContentLink.LinkedEntityId = newEmailMessage.Id;
+            newContentLink.ContentDocumentId = newContentVersion.ContentDocumentId;
+            newContentLink.ShareType = 'V';
+            lstContentLink.add(newContentLink);
+          }
+
+          database.insert(lstContentLink);
         }
+        
         result.success = true;
         return result;
     }
@@ -69,8 +87,11 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       return newCase;
     } 
 
-    public Contact getContactFromEmailAddress(String emailAddress){
-     return null;
+    public list<Contact> getContactFromEmailAddress(String emailAddress){
+     
+     List<Contact> lstContacts = [select Id from contact where email = :emailAddress];
+    
+     return lstContacts;
     }
 
 }
