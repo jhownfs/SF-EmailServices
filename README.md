@@ -11,6 +11,12 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 ## How to use this? 🪧
 
+1. Clone this repository
+2. Deploy to your org
+3. Configure Queue/Skill object (in developement) 🚧
+4. Configure email template to use auto-response (in developement) 🚧
+5. Enable auto-response in custom metadata type (in developement) 🚧
+
 ##Next steps 🪜
 
 - Allow search for keyword inside body or subject and redirect to queue or skill
@@ -23,4 +29,4 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 ## Can you contribute for this template? 🆘
 
-- open a PR =D
+- open a PR 😀
