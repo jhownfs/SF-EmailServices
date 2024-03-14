@@ -1,18 +1,26 @@
-# Salesforce DX Project: Next Steps
+# Email Service Template 📬
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This project is build to help to implemetation Email Service Salesforce how alternative to email-to-case, give for developer more control about inbound emails.
 
-## How Do You Plan to Deploy Your Changes?
+## Features 🔥
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+- Create case based in threadId in body or subject email
+- Create files to email
+- Adjust SRC images inside email body
+- Search for keyword inside body or subject and redirect to queue or skill
 
-## Configure Your Salesforce DX Project
+## How to use this? 🪧
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+##Next steps 🪜
 
-## Read All About It
+- Allow search for keyword inside body or subject and redirect to queue or skill
+- Allow auto-response inside service to customer
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+## More information ℹ️
+
+- [Email Service Documentation](https://help.salesforce.com/s/articleView?id=sf.code_email_services.htm&language=en_US&type=5)
+- [Apex Email Service Documentation](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_email_inbound_what_is.htm)
+
+## Can you contribute for this template? 🆘
+
+- open a PR =D
