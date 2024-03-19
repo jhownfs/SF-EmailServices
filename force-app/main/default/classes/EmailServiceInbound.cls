@@ -30,7 +30,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
 
         //ajustar isso aqui//
         for (Messaging.InboundEmail.Header header : headersList) {
-          if (header.name == 'Content-ID') {
+          if (header != null && header.name == 'Content-ID') {
             headersMap.put(
               binAttach.fileName,
               header.value.replaceAll('<', '').replaceAll('>', '')
@@ -56,6 +56,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
         mapContent.put(vContentVersion.Title, vContentVersion);
       }
 
+      system.debug('mapContent = ' + mapContent);
       for (ContentVersion newContentVersion : mapContent.values()) {
         String newUrl =
           '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
@@ -103,7 +104,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       email.htmlBody
     );
 
-    if (String.isBlank(caseId)) {
+    if (String.isBlank(caseId) && email.headers != null) {
       caseId = Cases.getCaseIdFromEmailHeaders(email.headers);
     }
 
@@ -122,15 +123,5 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
     newCase.status = 'new';
 
     return newCase;
-  }
-
-  public list<Contact> getContactFromEmailAddress(String emailAddress) {
-    List<Contact> lstContacts = [
-      SELECT Id
-      FROM contact
-      WHERE email = :emailAddress
-    ];
-
-    return lstContacts;
   }
 }
