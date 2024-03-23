@@ -1,4 +1,6 @@
 public with sharing class ContentVersionFactory {
+  private final String ShareType = 'V';
+
   public ContentVersion createContentVersion(
     String title,
     String pathOnClient,
@@ -19,7 +21,7 @@ public with sharing class ContentVersionFactory {
     ContentDocumentLink newContentLink = new ContentDocumentLink();
     newContentLink.LinkedEntityId = idEmail;
     newContentLink.ContentDocumentId = ContentDocumentId;
-    newContentLink.ShareType = 'V';
+    newContentLink.ShareType = this.ShareType;
     return newContentLink;
   }
 }

@@ -69,17 +69,18 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
         }
       }
 
-      EmailMessage newEmailMessage = new EmailMessage();
-      newEmailMessage.ToAddress = String.join(email.toAddresses, ',');
-      newEmailMessage.FromAddress = email.FromAddress;
-      newEmailMessage.FromName = email.FromName;
-      newEmailMessage.Subject = email.subject;
-      newEmailMessage.status = '2';
-      newEmailMessage.HtmlBody = email.htmlBody;
-      newEmailMessage.Incoming = true;
-      newEmailMessage.TextBody = email.plainTextBody;
-      newEmailMessage.ParentId = upsertCase.id;
-      insert newEmailMessage;
+      EmailMessageFactory factoryEmailMessage = new EmailMessageFactory();
+      EmailMessage newEmailMessage = factoryEmailMessage.createEmailMessage(
+        email.toAddresses,
+        email.fromAddress,
+        email.fromName,
+        email.subject,
+        email.htmlBody,
+        email.plainTextBody,
+        upsertCase.Id
+      );
+
+      database.insert(newEmailMessage);
 
       for (
         Messaging.InboundEmail.binaryAttachment binAttach : email.binaryAttachments
