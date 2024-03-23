@@ -5,65 +5,68 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
   ) {
     Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
 
-    Case updCase = new Case(Id = this.getCaseIdFromEmail(email));
+    try {
+      Case upsertCase = new Case(id = CaseFactory.getCaseIdFromEmail(email));
+      CaseFactory factoryCase = new CaseFactory();
 
-    if (updCase.id == null) {
-      updCase = this.createCase(
-        email.subject,
-        email.plainTextBody,
-        email.FromAddress
-      );
-      database.insert(updCase);
-    }
+      if (upsertCase.id == null) {
+        factoryCase.createCase(
+          email.subject,
+          email.plainTextBody,
+          email.FromAddress
+        );
+        database.insert(upsertCase);
+      }
 
-    Map<String, ContentVersion> mapContent = new Map<String, ContentVersion>();
-    List<ContentVersion> lstContentVersion = new List<ContentVersion>();
-    List<ContentDocumentLink> lstContentLink = new List<ContentDocumentLink>();
+      Map<String, ContentVersion> mapContent = new Map<String, ContentVersion>();
+      List<ContentVersion> lstContentVersion = new List<ContentVersion>();
+      List<ContentDocumentLink> lstContentLink = new List<ContentDocumentLink>();
 
-    Map<String, String> headersMap = new Map<String, String>();
+      Map<String, String> headersMap = new Map<String, String>();
 
-    if (email.binaryAttachments != null) {
-      for (
-        Messaging.InboundEmail.binaryAttachment binAttach : email.binaryAttachments
-      ) {
-        List<Messaging.InboundEmail.Header> headersList = binAttach.headers;
+      if (email.binaryAttachments != null) {
+        for (
+          Messaging.InboundEmail.binaryAttachment binAttach : email.binaryAttachments
+        ) {
+          List<Messaging.InboundEmail.Header> headersList = binAttach.headers;
 
-        //ajustar isso aqui//
-        for (Messaging.InboundEmail.Header header : headersList) {
-          if (header != null && header.name == 'Content-ID') {
-            headersMap.put(
-              binAttach.fileName,
-              header.value.replaceAll('<', '').replaceAll('>', '')
-            );
+          for (Messaging.InboundEmail.Header header : headersList) {
+            if (header != null && header.name == 'Content-ID') {
+              headersMap.put(
+                binAttach.fileName,
+                header.value.replaceAll('<', '').replaceAll('>', '')
+              );
+            }
           }
+
+          ContentVersionFactory factoryContentVersion = new ContentVersionFactory();
+          lstContentVersion.add(
+            factoryContentVersion.createContentVersion(
+              binAttach.fileName,
+              binAttach.fileName,
+              binAttach.body
+            )
+          );
         }
 
-        ContentVersion newContentVersion = new ContentVersion();
-        newContentVersion.VersionData = binAttach.body;
-        newContentVersion.Title = binAttach.fileName;
-        newContentVersion.PathOnClient = binAttach.fileName;
+        database.insert(lstContentVersion);
 
-        lstContentVersion.add(newContentVersion);
-      }
+        for (ContentVersion vContentVersion : [
+          SELECT Id, ContentDocumentId, Title
+          FROM ContentVersion
+          WHERE Id IN :lstContentVersion
+        ]) {
+          mapContent.put(vContentVersion.Title, vContentVersion);
+        }
 
-      database.insert(lstContentVersion);
-
-      for (ContentVersion vContentVersion : [
-        SELECT Id, ContentDocumentId, Title
-        FROM ContentVersion
-        WHERE Id IN :lstContentVersion
-      ]) {
-        mapContent.put(vContentVersion.Title, vContentVersion);
-      }
-
-      system.debug('mapContent = ' + mapContent);
-      for (ContentVersion newContentVersion : mapContent.values()) {
-        String newUrl =
-          '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
-        email.htmlBody = email.htmlBody.replaceAll(
-          'cid:' + headersMap.get(newContentVersion.Title),
-          newUrl
-        );
+        for (ContentVersion newContentVersion : mapContent.values()) {
+          String newUrl =
+            '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
+          email.htmlBody = email.htmlBody.replaceAll(
+            'cid:' + headersMap.get(newContentVersion.Title),
+            newUrl
+          );
+        }
       }
 
       EmailMessage newEmailMessage = new EmailMessage();
@@ -75,7 +78,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       newEmailMessage.HtmlBody = email.htmlBody;
       newEmailMessage.Incoming = true;
       newEmailMessage.TextBody = email.plainTextBody;
-      newEmailMessage.ParentId = updCase.id;
+      newEmailMessage.ParentId = upsertCase.id;
       insert newEmailMessage;
 
       for (
@@ -83,45 +86,33 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       ) {
         ContentVersion newContentVersion = mapContent.get(binAttach.fileName);
 
-        ContentDocumentLink newContentLink = new ContentDocumentLink();
-        newContentLink.LinkedEntityId = newEmailMessage.Id;
-        newContentLink.ContentDocumentId = newContentVersion.ContentDocumentId;
-        newContentLink.ShareType = 'V';
-        lstContentLink.add(newContentLink);
+        ContentVersionFactory factoryContentLink = new ContentVersionFactory();
+
+        lstContentLink.add(
+          factoryContentLink.createContentDocumentLink(
+            newEmailMessage.Id,
+            newContentVersion.ContentDocumentId
+          )
+        );
       }
 
       database.insert(lstContentLink);
+      result.success = true;
+    } catch (Exception e) {
+      result.success = false;
+      system.debug('error message ' + e.getMessage());
     }
 
-    result.success = true;
     return result;
   }
 
-  public Id getCaseIdFromEmail(Messaging.InboundEmail email) {
-    Id caseId = EmailMessages.getRecordIdFromEmail(
-      email.subject,
-      email.plainTextBody,
-      email.htmlBody
-    );
+  public list<Contact> getContactFromEmailAddress(String emailAddress) {
+    List<Contact> lstContacts = [
+      SELECT Id
+      FROM contact
+      WHERE email = :emailAddress
+    ];
 
-    if (String.isBlank(caseId) && email.headers != null) {
-      caseId = Cases.getCaseIdFromEmailHeaders(email.headers);
-    }
-
-    return caseId;
-  }
-
-  public Case createCase(
-    String subject,
-    String description,
-    String emailAddress
-  ) {
-    Case newCase = new Case();
-    newCase.Subject = subject;
-    newCase.Description = description;
-    newCase.SuppliedEmail = emailAddress;
-    newCase.status = 'new';
-
-    return newCase;
+    return lstContacts;
   }
 }
