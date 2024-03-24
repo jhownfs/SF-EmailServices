@@ -23,21 +23,16 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       List<ContentDocumentLink> lstContentLink = new List<ContentDocumentLink>();
 
       Map<String, String> headersMap = new Map<String, String>();
+      EmailServiceHelper EmailHelper = new EmailServiceHelper();
 
       if (email.binaryAttachments != null) {
         for (
           Messaging.InboundEmail.binaryAttachment binAttach : email.binaryAttachments
         ) {
-          List<Messaging.InboundEmail.Header> headersList = binAttach.headers;
-
-          for (Messaging.InboundEmail.Header header : headersList) {
-            if (header != null && header.name == 'Content-ID') {
-              headersMap.put(
-                binAttach.fileName,
-                header.value.replaceAll('<', '').replaceAll('>', '')
-              );
-            }
-          }
+          headersMap = EmailHelper.getBinaryAttahemnts(
+            binAttach,
+            binAttach.headers
+          );
 
           ContentVersionFactory factoryContentVersion = new ContentVersionFactory();
           lstContentVersion.add(
@@ -48,25 +43,25 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
             )
           );
         }
+      }
 
-        database.insert(lstContentVersion);
+      database.insert(lstContentVersion);
 
-        for (ContentVersion vContentVersion : [
-          SELECT Id, ContentDocumentId, Title
-          FROM ContentVersion
-          WHERE Id IN :lstContentVersion
-        ]) {
-          mapContent.put(vContentVersion.Title, vContentVersion);
-        }
+      for (ContentVersion vContentVersion : [
+        SELECT Id, ContentDocumentId, Title
+        FROM ContentVersion
+        WHERE Id IN :lstContentVersion
+      ]) {
+        mapContent.put(vContentVersion.Title, vContentVersion);
+      }
 
-        for (ContentVersion newContentVersion : mapContent.values()) {
-          String newUrl =
-            '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
-          email.htmlBody = email.htmlBody.replaceAll(
-            'cid:' + headersMap.get(newContentVersion.Title),
-            newUrl
-          );
-        }
+      for (ContentVersion newContentVersion : mapContent.values()) {
+        String newUrl =
+          '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
+        email.htmlBody = email.htmlBody.replaceAll(
+          'cid:' + headersMap.get(newContentVersion.Title),
+          newUrl
+        );
       }
 
       EmailMessageFactory factoryEmailMessage = new EmailMessageFactory();
