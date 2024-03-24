@@ -7,7 +7,6 @@ This project is build to help to implemetation Email Service Salesforce how alte
 - Create case based in threadId in body or subject email
 - Create files to email
 - Adjust SRC images inside email body
-- Search for keyword inside body or subject and redirect to queue or skill
 
 ## How to use this? 🪧
 
@@ -19,8 +18,10 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 ##Next steps 🪜
 
-- Allow search for keyword inside body or subject and redirect to queue or skill
-- Allow auto-response inside service to customer
+[] Allow search for keyword inside body or subject and redirect to queue or skill
+[] Allow auto-response inside service to customer
+[] Search for keyword inside body or subject and redirect to queue or skill
+[] Refactoing using design pattern - Clean Code.
 
 ## More information ℹ️
 
