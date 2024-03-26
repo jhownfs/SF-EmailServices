@@ -7,15 +7,18 @@ public with sharing class CreateQueueObject {
   public static void createQueueObject(
     List<CreateQueueObjectRequest> requests
   ) {
-    asyncCreateQueueObject(request.queue, request.object);
+    asyncCreateQueueObject(requests[0].queueId, requests[0].queueObject);
   }
 
   @future
-  private static void asyncCreateQueueObject(String queue, String object) {
+  private static void asyncCreateQueueObject(
+    String queueId,
+    String queueObject
+  ) {
     try {
       QueueSobject queueGroupObject = new QueueSobject();
-      queueGroup.QueueId = queue;
-      queueGroup.SobjectType = object;
+      queueGroupObject.QueueId = queueId;
+      queueGroupObject.SobjectType = queueObject;
 
       Database.insert(queueGroupObject);
     } catch (Exception e) {
@@ -26,8 +29,8 @@ public with sharing class CreateQueueObject {
 
   public class CreateQueueObjectRequest {
     @InvocableVariable(label='queue' description='queue name' required=true)
-    public String queue;
+    public String queueId;
     @InvocableVariable(label='object' description='object name' required=true)
-    public String object;
+    public String queueObject;
   }
 }
