@@ -22,5 +22,9 @@
 		<members>Flow_trigger_create_queue</members>
 		<name>Flow</name>
 	</types>
+	<types>
+		<members>Admin</members>
+		<name>Profile</name>
+	</types>
 	<version>58.0</version>
 </Package>
