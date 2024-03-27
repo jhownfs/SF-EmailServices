@@ -6,7 +6,17 @@
 	</types>
 	<types>
 		<members>Key_Word__c</members>
+		<members>Queue__c</members>
+		<members>Skill__c</members>
+		<members>Support_Manager__c</members>
 		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Key_Word__c</members>
+		<members>Queue__c</members>
+		<members>Skill__c</members>
+		<members>Support_Manager__c</members>
+		<name>CustomTab</name>
 	</types>
 	<version>58.0</version>
 </Package>
