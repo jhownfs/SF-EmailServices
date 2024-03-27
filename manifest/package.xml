@@ -18,5 +18,9 @@
 		<members>Support_Manager__c</members>
 		<name>CustomTab</name>
 	</types>
+	<types>
+		<members>Flow_trigger_create_queue</members>
+		<name>Flow</name>
+	</types>
 	<version>58.0</version>
 </Package>

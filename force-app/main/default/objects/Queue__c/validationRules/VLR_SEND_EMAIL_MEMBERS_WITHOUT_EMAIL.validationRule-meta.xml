@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VLR_SEND_EMAIL_MEMBERS_WITHOUT_EMAIL</fullName>
+    <active>true</active>
+    <description
+  >Validate if checkbox to send email is true and if email field is fill.</description>
+    <errorConditionFormula
+  >AND( Send_email_to_members__c , ISBLANK( Queue_Email__c ) )</errorConditionFormula>
+    <errorDisplayField>Queue_Email__c</errorDisplayField>
+    <errorMessage
+  >Email field cannot be blank when send email is checked</errorMessage>
+</ValidationRule>
