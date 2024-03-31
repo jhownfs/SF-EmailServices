@@ -18,10 +18,10 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 ## Next steps 🪜
 
-[X] Allow search for keyword inside body or subject and redirect to queue or skill
-[] Allow auto-response inside service to customer
-[] Search for keyword inside body or subject and redirect to queue or skill
-[] Refactoing using design pattern - Clean Code.
+- [x] Allow search for keyword inside body or subject and redirect to queue or skill
+- [] Allow auto-response inside service to customer
+- [] Search for keyword inside body or subject and redirect to queue or skill
+- [] Refactoing using design pattern - Clean Code.
 
 ## Objects UML Diagram 🖼️
 
