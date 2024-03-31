@@ -16,14 +16,14 @@ This project is build to help to implemetation Email Service Salesforce how alte
 4. Configure email template to use auto-response (in developement) 🚧
 5. Enable auto-response in custom metadata type (in developement) 🚧
 
-##Next steps 🪜
+## Next steps 🪜
 
 [X] Allow search for keyword inside body or subject and redirect to queue or skill
 [] Allow auto-response inside service to customer
 [] Search for keyword inside body or subject and redirect to queue or skill
 [] Refactoing using design pattern - Clean Code.
 
-###Objects UML Diagram
+## Objects UML Diagram 🖼️
 
 ![alt text](image.png)
 
