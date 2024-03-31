@@ -7,6 +7,8 @@ This project is build to help to implemetation Email Service Salesforce how alte
 - Create case based in threadId in body or subject email
 - Create files to email
 - Adjust SRC images inside email body
+- Search contact based on from email
+- Send case to queue or skill based on key word
 
 ## How to use this? 🪧
 

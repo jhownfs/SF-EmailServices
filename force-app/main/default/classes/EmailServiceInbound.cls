@@ -6,15 +6,25 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
     Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
 
     try {
+      Contact contactToCase = ContactSelector.getContactFromEmailAddress(
+        email.FromAddress
+      )[0];
+
+      if (contactToCase == null) {
+        ContactFactory newContact = new ContactFactory();
+        contactToCase = newContact.createContact(
+          email.FromAddress,
+          email.fromName
+        );
+
+        Database.insert(contactToCase);
+      }
+
       Case upsertCase = new Case(id = CaseFactory.getCaseIdFromEmail(email));
       CaseFactory factoryCase = new CaseFactory();
 
       if (upsertCase.id == null) {
-        factoryCase.createCase(
-          email.subject,
-          email.plainTextBody,
-          email.FromAddress
-        );
+        factoryCase.createCase(email, contactToCase);
         database.insert(upsertCase);
       }
 

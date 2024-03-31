@@ -1,13 +1,10 @@
 public with sharing class CaseFactory {
-  public Case createCase(
-    String subject,
-    String description,
-    String emailAddress
-  ) {
+  public Case createCase(Messaging.InboundEmail email, Contact contactToCase) {
     Case newCase = new Case();
-    newCase.Subject = subject;
-    newCase.Description = description;
-    newCase.SuppliedEmail = emailAddress;
+    newCase.Subject = email.subject;
+    newCase.Description = email.plainTextBody;
+    newCase.SuppliedEmail = email.FromAddress;
+    newCase.ContactId = contactToCase.id;
     newCase.status = 'new';
 
     return newCase;
