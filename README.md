@@ -12,16 +12,20 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 1. Clone this repository
 2. Deploy to your org
-3. Configure Queue/Skill object (in developement) 🚧
+3. Configure Queue/Skill object
 4. Configure email template to use auto-response (in developement) 🚧
 5. Enable auto-response in custom metadata type (in developement) 🚧
 
 ##Next steps 🪜
 
-[] Allow search for keyword inside body or subject and redirect to queue or skill
+[X] Allow search for keyword inside body or subject and redirect to queue or skill
 [] Allow auto-response inside service to customer
 [] Search for keyword inside body or subject and redirect to queue or skill
 [] Refactoing using design pattern - Clean Code.
+
+###Objects UML Diagram
+
+![alt text](image.png)
 
 ## More information ℹ️
 

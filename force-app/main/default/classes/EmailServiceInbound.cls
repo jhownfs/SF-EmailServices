@@ -101,14 +101,4 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
 
     return result;
   }
-
-  public list<Contact> getContactFromEmailAddress(String emailAddress) {
-    List<Contact> lstContacts = [
-      SELECT Id
-      FROM contact
-      WHERE email = :emailAddress
-    ];
-
-    return lstContacts;
-  }
 }
