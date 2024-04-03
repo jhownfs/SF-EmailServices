@@ -187,7 +187,7 @@
         <connector>
             <targetReference>Get_Queue</targetReference>
         </connector>
-        <object>Queue__c</object>
+        <object>Queue_Manager__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>

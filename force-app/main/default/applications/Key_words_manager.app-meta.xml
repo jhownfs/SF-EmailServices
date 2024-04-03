@@ -15,7 +15,7 @@
     <navType>Standard</navType>
     <tabs>Support_Manager__c</tabs>
     <tabs>Key_Word__c</tabs>
-    <tabs>Queue__c</tabs>
+    <tabs>Queue_Manager__c</tabs>
     <tabs>Skill__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Key_words_manager_UtilityBar</utilityBar>

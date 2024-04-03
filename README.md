@@ -36,4 +36,4 @@ This project is build to help to implemetation Email Service Salesforce how alte
 
 ## Can you contribute for this template? 🆘
 
-- open a PR 😀
+- Open a PR 😀

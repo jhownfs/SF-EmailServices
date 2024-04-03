@@ -20,6 +20,7 @@
 	</types>
 	<types>
 		<members>Flow_trigger_create_queue</members>
+		<members>Flow_trigger_create_skill</members>
 		<name>Flow</name>
 	</types>
 	<types>
