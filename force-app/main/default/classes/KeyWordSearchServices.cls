@@ -1,4 +1,4 @@
 public with sharing class KeyWordSearchServices {
-  public KeyWordSearchServices() {
+  public void searchByKeyWord(String keyWord) {
   }
 }
