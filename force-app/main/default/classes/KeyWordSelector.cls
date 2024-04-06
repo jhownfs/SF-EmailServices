@@ -4,11 +4,6 @@ public with sharing class KeyWordSelector {
 
     lstKeyWords = [
       SELECT
-        Id,
-        LastModifiedById,
-        CreatedById,
-        OwnerId,
-        Name,
         Key_Word__c,
         Support_Manager__r.Skill__c,
         Support_Manager__r.Queue_manager__c
