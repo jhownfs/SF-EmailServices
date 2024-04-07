@@ -28,9 +28,9 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
         database.insert(upsertCase);
       }
 
-      Map<String, ContentVersion> mapContent = new Map<String, ContentVersion>();
-      List<ContentVersion> lstContentVersion = new List<ContentVersion>();
-      List<ContentDocumentLink> lstContentLink = new List<ContentDocumentLink>();
+      Map<String, ContentVersion> mapContentVersionToChangeURL = new Map<String, ContentVersion>();
+      List<ContentVersion> lstContentVersionToInsert = new List<ContentVersion>();
+      List<ContentDocumentLink> lstContentLinkToInsert = new List<ContentDocumentLink>();
 
       Map<String, String> headersMap = new Map<String, String>();
       EmailServiceHelper EmailHelper = new EmailServiceHelper();
@@ -45,7 +45,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
           );
 
           ContentVersionFactory factoryContentVersion = new ContentVersionFactory();
-          lstContentVersion.add(
+          lstContentVersionToInsert.add(
             factoryContentVersion.createContentVersion(
               binAttach.fileName,
               binAttach.fileName,
@@ -55,17 +55,22 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
         }
       }
 
-      database.insert(lstContentVersion);
+      database.insert(lstContentVersionToInsert);
 
       for (ContentVersion vContentVersion : [
         SELECT Id, ContentDocumentId, Title
         FROM ContentVersion
-        WHERE Id IN :lstContentVersion
+        WHERE Id IN :lstContentVersionToInsert
       ]) {
-        mapContent.put(vContentVersion.Title, vContentVersion);
+        mapContentVersionToChangeURL.put(
+          vContentVersion.Title,
+          vContentVersion
+        );
       }
 
-      for (ContentVersion newContentVersion : mapContent.values()) {
+      for (
+        ContentVersion newContentVersion : mapContentVersionToChangeURL.values()
+      ) {
         String newUrl =
           '/sfc/servlet.shepherd/version/download/' + newContentVersion.id;
         email.htmlBody = email.htmlBody.replaceAll(
@@ -90,11 +95,13 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       for (
         Messaging.InboundEmail.binaryAttachment binAttach : email.binaryAttachments
       ) {
-        ContentVersion newContentVersion = mapContent.get(binAttach.fileName);
+        ContentVersion newContentVersion = mapContentVersionToChangeURL.get(
+          binAttach.fileName
+        );
 
         ContentVersionFactory factoryContentLink = new ContentVersionFactory();
 
-        lstContentLink.add(
+        lstContentLinkToInsert.add(
           factoryContentLink.createContentDocumentLink(
             newEmailMessage.Id,
             newContentVersion.ContentDocumentId
@@ -102,7 +109,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
         );
       }
 
-      database.insert(lstContentLink);
+      database.insert(lstContentLinkToInsert);
       result.success = true;
     } catch (Exception e) {
       result.success = false;
