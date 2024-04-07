@@ -1,20 +1,24 @@
 public with sharing class KeyWordSearchServices {
-  public void searchByKeyWordInTextField(String textField) {
+  public Key_Word__c searchByKeyWordInTextField(String textField) {
     KeyWordSelector selectorKeyWords = new KeyWordSelector();
     List<Key_Word__c> lstKeyWords = selectorKeyWords.KeyWordSelector();
+    Key_Word__c foundKeyWord = new Key_Word__c();
 
     for (Key_Word__c keyword : lstKeyWords) {
-      String upperKeyWordStr = keyword.Key_Word__c.toUpperCase();
-      String upperTextFieldStr = textField.toUpperCase();
-      String patternKey = '(?<!\\p{L})' + upperKeyWordStr + '(?!\\p{L})';
-      pattern regex = pattern.compile(patternKey);
-      Matcher matcher = regex.matcher(upperTextFieldStr);
+      String fixAccentsFromText = AccentsUtils.removeDiacritics(textField);
+      String fixAccentsFromKeyWord = AccentsUtils.removeDiacritics(
+        keyword.Key_word__c
+      );
 
-      while (matcher.find()) {
-        System.debug('Found accent character: ' + matcher.group());
+      String upperKeyWordStr = fixAccentsFromKeyWord.toUpperCase();
+      String upperTextFieldStr = fixAccentsFromText.toUpperCase();
+
+      if (upperTextFieldStr.contains(upperKeyWordStr)) {
+        foundKeyWord = keyword;
+        break;
       }
-      system.debug('upperTextFieldStr =' + upperKeyWordStr);
-      system.debug('upperTextFieldStr =' + upperTextFieldStr);
     }
+
+    return foundKeyWord;
   }
 }
