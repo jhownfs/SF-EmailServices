@@ -32,6 +32,9 @@ public with sharing class CreateSkillRecord {
       req.setBody(body);
       Http http = new Http();
       HTTPResponse res = http.send(req);
+
+      //TO DO: Add pattern for response
+      //TO DO: Add skill id to skill object
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());
