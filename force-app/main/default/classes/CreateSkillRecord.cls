@@ -32,7 +32,6 @@ public with sharing class CreateSkillRecord {
       req.setBody(body);
       Http http = new Http();
       HTTPResponse res = http.send(req);
-      System.debug(res.getBody());
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());
@@ -48,5 +47,7 @@ public with sharing class CreateSkillRecord {
       required=true
     )
     public String developerName;
+    @InvocableVariable(label='recordId' description='Record Id' required=true)
+    public String recordId;
   }
 }
