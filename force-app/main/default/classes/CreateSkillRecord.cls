@@ -7,11 +7,19 @@ public with sharing class CreateSkillRecord {
   public static void createSkillRecord(
     List<CreateSkillRecordRequest> requests
   ) {
-    insertSkill(requests[0].masterLabel, requests[0].developerName);
+    insertSkill(
+      requests[0].masterLabel,
+      requests[0].developerName,
+      requests[0].recordId
+    );
   }
 
   @future(callout=true)
-  private static void insertSkill(String masterLabel, String developerName) {
+  private static void insertSkill(
+    String masterLabel,
+    String developerName,
+    String recordId
+  ) {
     try {
       HttpRequest req = new HttpRequest();
       req.setEndpoint(
@@ -35,6 +43,16 @@ public with sharing class CreateSkillRecord {
 
       //TO DO: Add pattern for response
       //TO DO: Add skill id to skill object
+      Skill__c skillToUpdate = [
+        SELECT id, SkillId__c
+        FROM Skill__c
+        WHERE id = :recordId
+      ];
+      Map<String, String> responseMapToString = (Map<String, String>) JSON.deserializeUntyped(
+        res.getBody()
+      );
+      skillToUpdate.SkillId__c = responseMapToString.get('Id');
+      Database.update(skillToUpdate);
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());

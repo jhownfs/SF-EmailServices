@@ -114,7 +114,6 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       //TO DO: send to Queue or skill based on keyword
 
       //TO DO: send email to support
-
       result.success = true;
     } catch (Exception e) {
       result.success = false;
