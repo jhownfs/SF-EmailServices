@@ -4,7 +4,7 @@ public with sharing class CreateQueueObject {
     description='method responsible by create object queue'
     category='Queue'
   )
-  public static void createQueueObject(
+  public static void createQueueConfiguration(
     List<CreateQueueObjectRequest> requests
   ) {
     asyncCreateQueueObject(requests[0].queueId, requests[0].queueObject);

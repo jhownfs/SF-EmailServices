@@ -4,7 +4,7 @@ public with sharing class CreateSkillRecord {
     description='Create skill inside support manager object'
     category='Skill'
   )
-  public static void createSkillRecord(
+  public static void createSkillConfiguration(
     List<CreateSkillRecordRequest> requests
   ) {
     insertSkill(
@@ -38,20 +38,23 @@ public with sharing class CreateSkillRecord {
         developerName +
         '"}';
       req.setBody(body);
+
       Http http = new Http();
       HTTPResponse res = http.send(req);
 
       //TO DO: Add pattern for response
-      //TO DO: Add skill id to skill object
       Skill__c skillToUpdate = [
         SELECT id, SkillId__c
         FROM Skill__c
         WHERE id = :recordId
       ];
-      Map<String, String> responseMapToString = (Map<String, String>) JSON.deserializeUntyped(
+
+      Map<String, Object> responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
         res.getBody()
       );
-      skillToUpdate.SkillId__c = responseMapToString.get('Id');
+
+      skillToUpdate.SkillId__c = (String) responseMapToString.get('id');
+
       Database.update(skillToUpdate);
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
