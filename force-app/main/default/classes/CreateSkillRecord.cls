@@ -21,12 +21,15 @@ public with sharing class CreateSkillRecord {
     String recordId
   ) {
     try {
+      String IdSkillExist = queryExistSkill(masterLabel);
+
       HttpRequest req = new HttpRequest();
       req.setEndpoint(
         URL.getOrgDomainURL().toExternalForm() +
-        '/services/data/v58.0/sobjects/Skill'
+          '/services/data/v58.0/sobjects/Skill' +
+          IdSkillExist
       );
-      req.setMethod('POST');
+      req.setMethod('PUT');
       req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
       req.setHeader('Content-Type', 'application/json');
       req.setHeader('X-PrettyPrint', '1');
@@ -60,6 +63,39 @@ public with sharing class CreateSkillRecord {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());
     }
+  }
+
+  public static String queryExistSkill(String masterLabel) {
+    String skillId = '';
+
+    try {
+      HttpRequest req = new HttpRequest();
+      req.setEndpoint(
+        URL.getOrgDomainURL().toExternalForm() +
+          '/services/data/v58.0/query?q=SELECT+id+FROM+skill+where+MasterLabel=' +
+          '' +
+          masterLabel +
+          ''
+      );
+      req.setMethod('GET');
+      req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
+      req.setHeader('Content-Type', 'application/json');
+      req.setHeader('X-PrettyPrint', '1');
+
+      Http http = new Http();
+      HTTPResponse res = http.send(req);
+
+      Map<String, Object> responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
+        res.getBody()
+      );
+
+      skillId = (String) responseMapToString.get('id');
+    } catch (Exception e) {
+      system.debug('e => ' + e.getMessage());
+      system.debug('e => ' + e.getStackTraceString());
+    }
+
+    return skillId;
   }
 
   public class CreateSkillRecordRequest {

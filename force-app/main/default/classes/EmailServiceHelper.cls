@@ -27,14 +27,13 @@ public with sharing class EmailServiceHelper {
     );
 
     //TO DO refactoring to clean code, using interface pattern and strategy pattern
-
     PendingServiceRouting pendingServiceToRouting = new PendingServiceRouting();
     if (foundKeyWord != null) {
       pendingServiceToRouting.CapacityWeight = 1;
       pendingServiceToRouting.WorkItemId = caseCreatedorUpdated.id;
       pendingServiceToRouting.RoutingModel = 'MostAvailable';
       pendingServiceToRouting.RoutingPriority = 1;
-      pendingServiceToRouting.ServiceChannelId = '0N94W000000p0ea'; //Change this value for your organization
+      pendingServiceToRouting.ServiceChannelId = '0N94W000000p0ea'; //Change this value for your channel in organization
       pendingServiceToRouting.IsReadyForRouting = false;
 
       Database.insert(pendingServiceToRouting);
