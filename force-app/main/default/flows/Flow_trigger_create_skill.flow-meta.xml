@@ -4,7 +4,7 @@
         <name>Create_Skill_record</name>
         <label>Create Skill record</label>
         <locationX>176</locationX>
-        <locationY>323</locationY>
+        <locationY>515</locationY>
         <actionName>CreateSkillRecord</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -20,10 +20,41 @@
                 <elementReference>$Record.Name</elementReference>
             </value>
         </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
         <nameSegment>CreateSkillRecord</nameSegment>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>60.0</apiVersion>
+    <decisions>
+        <name>Decision_1</name>
+        <label>Decision 1</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Create_Skill_record</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>isUpdate</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Name</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Skill_record</targetReference>
+            </connector>
+            <label>isUpdate</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <formulas>
         <name>SkillDeveloperName</name>
@@ -57,7 +88,7 @@
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Create_Skill_record</targetReference>
+            <targetReference>Decision_1</targetReference>
         </connector>
         <object>Skill__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
