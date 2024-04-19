@@ -4,7 +4,7 @@
         <name>Create_Skill_record</name>
         <label>Create Skill record</label>
         <locationX>176</locationX>
-        <locationY>515</locationY>
+        <locationY>431</locationY>
         <actionName>CreateSkillRecord</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -35,9 +35,6 @@
         <label>Decision 1</label>
         <locationX>176</locationX>
         <locationY>323</locationY>
-        <defaultConnector>
-            <targetReference>Create_Skill_record</targetReference>
-        </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>isUpdate</name>
@@ -50,12 +47,33 @@
                 </rightValue>
             </conditions>
             <connector>
+                <isGoTo>true</isGoTo>
                 <targetReference>Create_Skill_record</targetReference>
             </connector>
             <label>isUpdate</label>
         </rules>
+        <rules>
+            <name>isNew</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsnewRecord</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Skill_record</targetReference>
+            </connector>
+            <label>isNew</label>
+        </rules>
     </decisions>
     <environments>Default</environments>
+    <formulas>
+        <name>IsnewRecord</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(ISNEW())</expression>
+    </formulas>
     <formulas>
         <name>SkillDeveloperName</name>
         <dataType>String</dataType>
