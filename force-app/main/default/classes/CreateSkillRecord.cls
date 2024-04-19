@@ -22,14 +22,14 @@ public with sharing class CreateSkillRecord {
   ) {
     try {
       String IdSkillExist = queryExistSkill(masterLabel);
-
       HttpRequest req = new HttpRequest();
-      req.setEndpoint(
-        URL.getOrgDomainURL().toExternalForm() +
-          '/services/data/v58.0/sobjects/Skill' +
-          IdSkillExist
-      );
-      req.setMethod('PUT');
+
+      String endpoint = (String.isNotBlank(IdSkillExist))
+        ? '/services/data/v58.0/sobjects/Skill/' + IdSkillExist
+        : '/services/data/v58.0/sobjects/Skill';
+      req.setEndpoint(URL.getOrgDomainURL().toExternalForm() + endpoint);
+      String method = (String.isNotBlank(IdSkillExist)) ? 'PATCH' : 'POST';
+      req.setMethod(method);
       req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
       req.setHeader('Content-Type', 'application/json');
       req.setHeader('X-PrettyPrint', '1');
@@ -52,11 +52,16 @@ public with sharing class CreateSkillRecord {
         WHERE id = :recordId
       ];
 
-      Map<String, Object> responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
-        res.getBody()
-      );
+      Map<String, Object> responseMapToString = new Map<String, Object>();
 
-      skillToUpdate.SkillId__c = (String) responseMapToString.get('id');
+      if (res.getStatusCode() == 200) {
+        responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
+          res.getBody()
+        );
+      }
+      skillToUpdate.SkillId__c = (String.isnotblank(IdSkillExist))
+        ? IdSkillExist
+        : (String) responseMapToString.get('id');
 
       Database.update(skillToUpdate);
     } catch (Exception e) {
@@ -73,9 +78,9 @@ public with sharing class CreateSkillRecord {
       req.setEndpoint(
         URL.getOrgDomainURL().toExternalForm() +
           '/services/data/v58.0/query?q=SELECT+id+FROM+skill+where+MasterLabel=' +
-          '' +
+          '\'' +
           masterLabel +
-          ''
+          '\''
       );
       req.setMethod('GET');
       req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
@@ -89,7 +94,12 @@ public with sharing class CreateSkillRecord {
         res.getBody()
       );
 
-      skillId = (String) responseMapToString.get('id');
+      List<Object> listRecords = (List<Object>) responseMapToString.get(
+        'records'
+      );
+      Map<String, Object> mapRecords = (Map<String, Object>) listRecords[0];
+
+      skillId = (String) mapRecords.get('Id');
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());
