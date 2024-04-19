@@ -75,13 +75,12 @@ public with sharing class CreateSkillRecord {
 
     try {
       HttpRequest req = new HttpRequest();
-      req.setEndpoint(
-        URL.getOrgDomainURL().toExternalForm() +
-          '/services/data/v58.0/query?q=SELECT+id+FROM+skill+where+MasterLabel=' +
-          '\'' +
-          masterLabel +
-          '\''
-      );
+      String endpoint =
+        '/services/data/v58.0/query?q=SELECT+id+FROM+skill+where+MasterLabel=' +
+        '\'' +
+        masterLabel +
+        '\'';
+      req.setEndpoint(URL.getOrgDomainURL().toExternalForm() + endpoint);
       req.setMethod('GET');
       req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
       req.setHeader('Content-Type', 'application/json');
