@@ -6,11 +6,16 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
     Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
 
     try {
-      Contact contactToCase = ContactSelector.getContactFromEmailAddress(
+      List<Contact> lstContactToCase = ContactSelector.getContactFromEmailAddress(
         email.FromAddress
-      )[0];
+      );
 
-      if (contactToCase == null) {
+      Contact contactToCase = (lstContactToCase.isEmpty() ||
+        lstContactToCase == null)
+        ? new Contact()
+        : lstContactToCase[0];
+
+      if (String.isblank(contactToCase.id)) {
         ContactFactory newContact = new ContactFactory();
         contactToCase = newContact.createContact(
           email.FromAddress,
@@ -23,7 +28,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       Case upsertCase = new Case(id = CaseFactory.getCaseIdFromEmail(email));
       CaseFactory factoryCase = new CaseFactory();
 
-      if (upsertCase.id == null) {
+      if (String.isblank(upsertCase.id)) {
         factoryCase.createCase(email, contactToCase);
         database.insert(upsertCase);
       }
@@ -57,6 +62,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
 
       database.insert(lstContentVersionToInsert);
 
+      // TO DO Refactoring using REPOSITORY Pattern and SPECIFICATION
       for (ContentVersion vContentVersion : [
         SELECT Id, ContentDocumentId, Title
         FROM ContentVersion
@@ -112,12 +118,13 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       database.insert(lstContentLinkToInsert);
 
       //TO DO: send to Queue or skill based on keyword
-
+      EmailHelper.SearchByKeyWordAndSendToQueueOrSKill(upsertCase);
       //TO DO: send email to support
       result.success = true;
     } catch (Exception e) {
       result.success = false;
-      system.debug('error message ' + e.getMessage());
+      system.debug('error message = ' + e.getMessage());
+      system.debug('stack trace = ' + e.getStackTraceString());
     }
 
     return result;

@@ -22,12 +22,15 @@ public with sharing class EmailServiceHelper {
     Key_Word__c foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
       caseCreatedorUpdated.Description
     );
-    foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
-      caseCreatedorUpdated.subject
-    );
 
+    if (String.isblank(foundKeyWord.Key_word__c)) {
+      foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
+        caseCreatedorUpdated.subject
+      );
+    }
     //TO DO refactoring to clean code, using interface pattern and strategy pattern
     PendingServiceRouting pendingServiceToRouting = new PendingServiceRouting();
+
     if (foundKeyWord != null) {
       pendingServiceToRouting.CapacityWeight = 1;
       pendingServiceToRouting.WorkItemId = caseCreatedorUpdated.id;

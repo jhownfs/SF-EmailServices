@@ -14,6 +14,7 @@ private class EmailServiceInboundTest {
     email.headers = new List<Messaging.InboundEmail.Header>{ header };
     email.subject = 'Email InboundTest';
     email.fromAddress = 'someaddress@email.com';
+    email.fromName = 'Test Name';
     email.toAddresses = emails;
     email.htmlBody = 'email body';
     email.plainTextBody = 'email body';
