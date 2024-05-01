@@ -23,15 +23,20 @@ public with sharing class EmailServiceHelper {
       caseCreatedorUpdated.Description
     );
 
+    system.debug('foundKeyWord = ' + foundKeyWord);
+
     if (String.isblank(foundKeyWord.Key_word__c)) {
       foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
         caseCreatedorUpdated.subject
       );
     }
+
+    system.debug('foundKeyWord = ' + foundKeyWord);
+
     //TO DO refactoring to clean code, using interface pattern and strategy pattern
     PendingServiceRouting pendingServiceToRouting = new PendingServiceRouting();
 
-    if (foundKeyWord != null) {
+    if (String.isnotblank(foundKeyWord.Key_word__c)) {
       pendingServiceToRouting.CapacityWeight = 1;
       pendingServiceToRouting.WorkItemId = caseCreatedorUpdated.id;
       pendingServiceToRouting.RoutingModel = 'MostAvailable';
@@ -50,5 +55,8 @@ public with sharing class EmailServiceHelper {
       skillReqToCase.SkillLevel = 1;
       Database.insert(skillReqToCase);
     }
+
+    pendingServiceToRouting.IsReadyForRouting = true;
+    Database.update(pendingServiceToRouting);
   }
 }
