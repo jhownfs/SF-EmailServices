@@ -19,6 +19,8 @@ public with sharing class EmailServiceHelper {
 
   public void SearchByKeyWordAndSendToQueueOrSKill(Case caseCreatedorUpdated) {
     KeyWordSearchServices keyWordServicesInstace = new KeyWordSearchServices();
+    system.debug('caseCreatedorUpdated = ' + caseCreatedorUpdated);
+
     Key_Word__c foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
       caseCreatedorUpdated.Description
     );

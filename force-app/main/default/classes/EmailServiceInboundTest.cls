@@ -6,7 +6,7 @@ private class EmailServiceInboundTest {
 
     Queue_Manager__c queueManagementTest = new Queue_Manager__c();
     queueManagementTEst.Name = 'Test';
-    queueManagementTEst.Object__c = 'Test';
+    queueManagementTEst.Object__c = 'Case';
     insert queueManagementTest;
 
     Skill__c skill = new Skill__c();

@@ -29,7 +29,7 @@ global class EmailServiceInbound implements Messaging.InboundEmailHandler {
       CaseFactory factoryCase = new CaseFactory();
 
       if (String.isblank(upsertCase.id)) {
-        factoryCase.createCase(email, contactToCase);
+        upsertCase = factoryCase.createCase(email, contactToCase);
         database.insert(upsertCase);
       }
 

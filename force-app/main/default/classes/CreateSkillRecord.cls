@@ -85,20 +85,23 @@ public with sharing class CreateSkillRecord {
       req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
       req.setHeader('Content-Type', 'application/json');
       req.setHeader('X-PrettyPrint', '1');
+      system.debug('req = ' + req.getBody());
 
       Http http = new Http();
       HTTPResponse res = http.send(req);
 
-      Map<String, Object> responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
-        res.getBody()
-      );
+      if (res.getStatusCode() == 200) {
+        Map<String, Object> responseMapToString = (Map<String, Object>) JSON.deserializeUntyped(
+          res.getBody()
+        );
 
-      List<Object> listRecords = (List<Object>) responseMapToString.get(
-        'records'
-      );
-      Map<String, Object> mapRecords = (Map<String, Object>) listRecords[0];
+        List<Object> listRecords = (List<Object>) responseMapToString.get(
+          'records'
+        );
+        Map<String, Object> mapRecords = (Map<String, Object>) listRecords[0];
 
-      skillId = (String) mapRecords.get('Id');
+        skillId = (String) mapRecords.get('Id');
+      }
     } catch (Exception e) {
       system.debug('e => ' + e.getMessage());
       system.debug('e => ' + e.getStackTraceString());
