@@ -3,8 +3,7 @@ public with sharing class KeyWordSearchServices {
     KeyWordSelector selectorKeyWords = new KeyWordSelector();
     List<Key_Word__c> lstKeyWords = selectorKeyWords.KeyWordSelector();
     Key_Word__c foundKeyWord = new Key_Word__c();
-    system.debug('foundKeyWord = ' + foundKeyWord);
-    system.debug('lstKeyWords = ' + lstKeyWords);
+
     for (Key_Word__c keyword : lstKeyWords) {
       String fixAccentsFromText = AccentsUtils.removeDiacritics(textField);
       String fixAccentsFromKeyWord = AccentsUtils.removeDiacritics(

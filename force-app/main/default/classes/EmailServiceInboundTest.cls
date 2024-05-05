@@ -1,7 +1,7 @@
-@istest
+@IsTest(SeeAllData=true)
 private class EmailServiceInboundTest {
-  @TestSetup
-  static void makeData() {
+  @IsTest
+  static void testInboudEmail() {
     test.setMock(HttpCalloutMock.class, new MockResponseGenerator());
 
     Queue_Manager__c queueManagementTest = new Queue_Manager__c();
@@ -11,6 +11,7 @@ private class EmailServiceInboundTest {
 
     Skill__c skill = new Skill__c();
     skill.Name = 'EmailTest';
+    skill.SkillId__c = 'test';
     insert skill;
 
     Support_Manager__c supManager = new Support_Manager__c();
@@ -22,9 +23,7 @@ private class EmailServiceInboundTest {
     keyWord.Key_word__c = 'Cartao';
     keyWord.Support_Manager__c = supManager.Id;
     insert keyWord;
-  }
 
-  static testMethod void testInboudEmail() {
     Messaging.InboundEmail email = new Messaging.InboundEmail();
     Messaging.InboundEnvelope env = new Messaging.InboundEnvelope();
 

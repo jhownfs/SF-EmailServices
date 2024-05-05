@@ -19,21 +19,16 @@ public with sharing class EmailServiceHelper {
 
   public void SearchByKeyWordAndSendToQueueOrSKill(Case caseCreatedorUpdated) {
     KeyWordSearchServices keyWordServicesInstace = new KeyWordSearchServices();
-    system.debug('caseCreatedorUpdated = ' + caseCreatedorUpdated);
 
     Key_Word__c foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
       caseCreatedorUpdated.Description
     );
-
-    system.debug('foundKeyWord = ' + foundKeyWord);
 
     if (String.isblank(foundKeyWord.Key_word__c)) {
       foundKeyWord = keyWordServicesInstace.searchByKeyWordInTextField(
         caseCreatedorUpdated.subject
       );
     }
-
-    system.debug('foundKeyWord = ' + foundKeyWord);
 
     //TO DO refactoring to clean code, using interface pattern and strategy pattern
     PendingServiceRouting pendingServiceToRouting = new PendingServiceRouting();
@@ -42,6 +37,7 @@ public with sharing class EmailServiceHelper {
       pendingServiceToRouting.CapacityWeight = 1;
       pendingServiceToRouting.WorkItemId = caseCreatedorUpdated.id;
       pendingServiceToRouting.RoutingModel = 'MostAvailable';
+      pendingServiceToRouting.RoutingType = 'SkillsBased';
       pendingServiceToRouting.RoutingPriority = 1;
       pendingServiceToRouting.ServiceChannelId = '0N94W000000p0ea'; //Change this value for your channel in organization
       pendingServiceToRouting.IsReadyForRouting = false;
@@ -52,7 +48,7 @@ public with sharing class EmailServiceHelper {
     //TO DO add ServiceSkill to routing
     if (!String.isblank(foundKeyWord.Support_Manager__r.Skill__c)) {
       SkillRequirement skillReqToCase = new SkillRequirement();
-      skillReqToCase.SkillId = foundKeyWord.Support_Manager__r.Skill__c;
+      skillReqToCase.SkillId = foundKeyWord.Support_Manager__r.Skill__r.SkillId__c;
       skillReqToCase.RelatedRecordId = pendingServiceToRouting.Id;
       skillReqToCase.SkillLevel = 1;
       Database.insert(skillReqToCase);

@@ -5,7 +5,7 @@ public with sharing class KeyWordSelector {
     lstKeyWords = [
       SELECT
         Key_Word__c,
-        Support_Manager__r.Skill__c,
+        Support_Manager__r.Skill__r.SkillId__c,
         Support_Manager__r.Queue_manager__c
       FROM Key_Word__c
     ];
